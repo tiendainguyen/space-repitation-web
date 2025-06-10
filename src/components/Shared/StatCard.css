@@ -1,0 +1,47 @@
+.stat-card {
+  padding: 25px;
+  border-radius: 15px;
+  color: white;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+}
+
+.stat-number {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* Gradient Variants */
+.gradient-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.gradient-blue {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.gradient-green {
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
+}
+
+.gradient-orange {
+  background: linear-gradient(135deg, #fa709a, #fee140);
+}
+
+.gradient-purple {
+  background: linear-gradient(135deg, #a8edea, #fed6e3);
+}
+
+.gradient-red {
+  background: linear-gradient(135deg, #ff9a9e, #fecfef);
+}
