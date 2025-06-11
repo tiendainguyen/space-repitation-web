@@ -1,0 +1,78 @@
+/* Progress Circle Component Styles */
+.progress-circle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: conic-gradient(
+            var(--progress-color, #667eea) 0deg,
+            var(--progress-color, #667eea) calc(var(--progress, 0) * 3.6deg),
+            var(--progress-bg, #e2e8f0) calc(var(--progress, 0) * 3.6deg)
+    );
+    transition: background 0.3s ease;
+}
+
+.progress-circle::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: white;
+    width: calc(100% - 8px);
+    height: calc(100% - 8px);
+}
+
+.progress-circle-content {
+    position: relative;
+    z-index: 1;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #2d3748;
+}
+
+/* Size variants */
+.progress-circle-sm {
+    width: 40px;
+    height: 40px;
+}
+
+.progress-circle-md {
+    width: 60px;
+    height: 60px;
+}
+
+.progress-circle-lg {
+    width: 80px;
+    height: 80px;
+}
+
+/* Color variants */
+.progress-circle-primary {
+    --progress-color: #667eea;
+}
+
+.progress-circle-success {
+    --progress-color: #48bb78;
+}
+
+.progress-circle-warning {
+    --progress-color: #ed8936;
+}
+
+.progress-circle-error {
+    --progress-color: #f56565;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .progress-circle::before {
+        background: #2d3748;
+    }
+
+    .progress-circle-content {
+        color: #f7fafc;
+    }
+}

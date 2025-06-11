@@ -1,9 +1,16 @@
+/* Enhanced Sidebar.css with responsive improvements */
 .sidebar {
   width: 280px;
   background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
   color: white;
   display: flex;
   flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  transition: transform 0.3s ease;
 }
 
 .sidebar-content {
@@ -15,7 +22,7 @@
 
 .logo {
   padding: 0 30px 40px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   margin-bottom: 30px;
 }
 
@@ -24,17 +31,20 @@
   font-weight: 700;
   color: white;
   margin-bottom: 5px;
+  line-height: 1.2;
 }
 
 .logo p {
   font-size: 14px;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
   margin: 0;
+  line-height: 1.3;
 }
 
 .nav-menu {
   flex: 1;
   padding: 0 15px;
+  overflow-y: auto;
 }
 
 .nav-item {
@@ -42,15 +52,17 @@
   align-items: center;
   gap: 15px;
   padding: 15px 15px;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255, 255, 255, 0.8);
   border-radius: 12px;
   transition: all 0.3s ease;
   cursor: pointer;
   margin-bottom: 8px;
+  text-decoration: none;
+  position: relative;
 }
 
 .nav-item:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: white;
   transform: translateX(5px);
 }
@@ -58,28 +70,47 @@
 .nav-item.active {
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 70%;
+  background: white;
+  border-radius: 2px;
 }
 
 .nav-icon {
   font-size: 20px;
   width: 24px;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .nav-text {
   font-weight: 500;
   font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .user-section {
   padding: 20px 30px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   margin: 0 30px;
   border-radius: 15px;
   display: flex;
   align-items: center;
   gap: 12px;
   position: relative;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .user-avatar {
@@ -94,35 +125,150 @@
   font-weight: bold;
   font-size: 18px;
   flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .user-info {
   flex: 1;
+  min-width: 0; /* Prevents flex item from overflowing */
 }
 
 .user-info h4 {
   font-size: 14px;
   margin-bottom: 3px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .user-info p {
   font-size: 12px;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .logout-btn {
   background: none;
   border: none;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
   font-size: 16px;
-  padding: 5px;
-  border-radius: 5px;
+  padding: 8px;
+  border-radius: 8px;
   transition: all 0.3s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logout-btn:hover {
   color: white;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-content {
+    padding: 20px 0;
+  }
+
+  .logo {
+    padding: 0 20px 30px;
+    margin-bottom: 20px;
+  }
+
+  .logo h1 {
+    font-size: 22px;
+  }
+
+  .nav-menu {
+    padding: 0 10px;
+  }
+
+  .nav-item {
+    padding: 12px 15px;
+    margin-bottom: 6px;
+  }
+
+  .user-section {
+    margin: 0 20px;
+    padding: 15px 20px;
+  }
+
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .user-info h4 {
+    font-size: 13px;
+  }
+
+  .user-info p {
+    font-size: 11px;
+  }
+}
+
+/* Tablet styles */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .sidebar {
+    width: 260px;
+  }
+
+  .logo {
+    padding: 0 25px 35px;
+  }
+
+  .user-section {
+    margin: 0 25px;
+    padding: 18px 25px;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .nav-item,
+  .logout-btn {
+    transition: none;
+  }
+
+  .nav-item:hover {
+    transform: none;
+  }
+
+  .logout-btn:hover {
+    transform: none;
+  }
+}
+
+/* Focus styles for keyboard navigation */
+.nav-item:focus,
+.logout-btn:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .sidebar {
+    background: linear-gradient(180deg, #1a202c 0%, #2d3748 100%);
+  }
 }
