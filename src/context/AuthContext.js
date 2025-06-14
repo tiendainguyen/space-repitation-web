@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import authService from '../services/authService';
 
 const AuthContext = createContext();
 
@@ -16,16 +17,16 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in (from localStorage or API)
     const checkAuthStatus = async () => {
       try {
-        const savedUser = localStorage.getItem('vocabmaster_user');
-        if (savedUser) {
-          setUser(JSON.parse(savedUser));
+        if (authService.isAuthenticated()) {
+          const user = authService.getUser();
+          setUser(user);
           setIsAuthenticated(true);
         }
       } catch (error) {
         console.error('Error checking auth status:', error);
+        authService.logout();
       } finally {
         setLoading(false);
       }
@@ -34,53 +35,49 @@ export const AuthProvider = ({ children }) => {
     checkAuthStatus();
   }, []);
 
-  const login = async (email, password) => {
-    // Simulate API call
+  const login = async (usernameOrEmail, password) => {
     try {
-      // For demo purposes, accept any email/password
-      const mockUser = {
-        id: 1,
-        email,
-        name: 'Daniel Nguyen',
-        avatar: 'D',
-        membershipType: 'Premium'
-      };
+      const result = await authService.login(usernameOrEmail, password);
       
-      setUser(mockUser);
-      setIsAuthenticated(true);
-      localStorage.setItem('vocabmaster_user', JSON.stringify(mockUser));
+      if (result.success) {
+        const user = authService.getUser();
+        setUser(user);
+        setIsAuthenticated(true);
+      }
       
-      return { success: true };
+      return result;
     } catch (error) {
-      return { success: false, error: 'Login failed' };
+      console.error('Login error:', error);
+      return { success: false, error: 'Login failed. Please try again.' };
     }
   };
 
   const register = async (userData) => {
-    // Simulate API call
     try {
-      const mockUser = {
-        id: Date.now(),
-        email: userData.email,
-        name: `${userData.firstName} ${userData.lastName}`,
-        avatar: userData.firstName.charAt(0).toUpperCase(),
-        membershipType: 'Free'
-      };
+      const result = await authService.register(userData);
       
-      setUser(mockUser);
-      setIsAuthenticated(true);
-      localStorage.setItem('vocabmaster_user', JSON.stringify(mockUser));
+      if (result.success) {
+        const user = authService.getUser();
+        setUser(user);
+        setIsAuthenticated(true);
+      }
       
-      return { success: true };
+      return result;
     } catch (error) {
-      return { success: false, error: 'Registration failed' };
+      console.error('Register error:', error);
+      return { success: false, error: 'Registration failed. Please try again.' };
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('vocabmaster_user');
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setUser(null);
+      setIsAuthenticated(false);
+    }
   };
 
   const value = {
