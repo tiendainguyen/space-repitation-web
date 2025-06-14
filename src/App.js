@@ -4,12 +4,12 @@ import { useAuth } from './context/AuthContext';
 import AuthenticationPages from './components/Auth/AuthenticationPages';
 import MainLayout from './components/Layout/MainLayout';
 import Dashboard from './components/Dashboard/Dashboard';
-// import StudySession from './components/Study/StudySession';
-// import Quiz from './components/Quiz/Quiz';
-// import Library from './components/Library/Library';
-// import AddWords from './components/AddWords/AddWords';
-// import Analytics from './components/Analytics/Analytics';
-// import Settings from './components/Settings/Settings';
+import StudySession from './components/Study/StudySession';
+import Quiz from './components/Quiz/Quiz';
+import Library from './components/Library/Library';
+import AddWords from './components/AddWords/AddWords';
+import Analytics from './components/Analytics/Analytics';
+import Settings from './components/Settings/Settings';
 import './styles/App.css';
 
 function App() {
