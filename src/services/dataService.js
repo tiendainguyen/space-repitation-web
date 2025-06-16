@@ -66,6 +66,46 @@ class DataService {
     }
   }
 
+  async searchDecks(page = 1, limit = 10, search = '') {
+    try {
+      const token = localStorage.getItem('vocabmaster_token');
+      if (!token) {
+        console.error('No authentication token found');
+        return {
+          success: false,
+          error: 'Authentication required. Please log in again.'
+        };
+      }
+
+      const params = {
+        page,
+        limit
+      };
+      
+      if (search && search.trim() !== '') {
+        params.search = search.trim();
+      }
+
+      const response = await apiClient.get('/api/v1/decks/search', { params });
+      return {
+        success: true,
+        data: response
+      };
+    } catch (error) {
+      console.error('Search decks error:', error);
+      if (error.response?.status === 401) {
+        return {
+          success: false,
+          error: 'Unauthorized: Please log in again'
+        };
+      }
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Failed to search decks'
+      };
+    }
+  }
+
   async getStudySession() {
     try {
       const response = await apiClient.get(API_CONFIG.ENDPOINTS.VOCABULARY.STUDY);

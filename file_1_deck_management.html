@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VocabMaster - Deck Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .web-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            display: flex;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        }
+        
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
+            color: white;
+            padding: 30px 0;
+            position: relative;
+        }
+        
+        .logo {
+            padding: 0 30px 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .logo p {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            margin-top: 5px;
+        }
+        
+        .nav-menu {
+            list-style: none;
+            padding: 0 15px;
+        }
+        
+        .nav-item {
+            margin-bottom: 8px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 15px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .nav-text {
+            font-weight: 500;
+            font-size: 15px;
+        }
+        
+        .user-section {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .user-info h4 {
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+        
+        .user-info p {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Top Header */
+        .top-header {
+            background: white;
+            padding: 25px 40px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-left h2 {
+            color: #2d3748;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .header-left p {
+            color: #718096;
+            font-size: 16px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 300px;
+            padding: 12px 20px 12px 45px;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #718096;
+        }
+        
+        .notification-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #f7fafc;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .notification-btn:hover {
+            background: #e2e8f0;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 12px;
+            height: 12px;
+            background: #f56565;
+            border-radius: 50%;
+        }
+        
+        /* Content Area */
+        .content-area {
+            padding: 40px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        /* Library Screen */
+        .library-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .library-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .library-header h3 {
+            color: #2d3748;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .library-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .deck-search-box {
+            position: relative;
+        }
+        
+        .deck-search-box input {
+            width: 250px;
+            padding: 12px 20px 12px 45px;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .deck-search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .deck-search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #718096;
+        }
+        
+        .create-deck-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .create-deck-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .filter-section {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .filter-btn:hover:not(.active) {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .library-deck-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .library-deck-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+        
+        .library-deck-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .library-deck-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .deck-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .library-deck-info h4 {
+            color: #2d3748;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .deck-meta {
+            color: #718096;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .progress-percent {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .deck-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        
+        .mini-stat {
+            text-align: center;
+        }
+        
+        .mini-number {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        
+        .mini-label {
+            font-size: 11px;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .mini-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .mini-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+        
+        .deck-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .action-btn.primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .action-btn.secondary {
+            color: #4a5568;
+        }
+        
+        .action-btn.danger {
+            color: #e53e3e;
+            border-color: #fed7d7;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .action-btn.primary:hover {
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .action-btn.secondary:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .action-btn.danger:hover {
+            background: #fed7d7;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
+            gap: 10px;
+        }
+        
+        .pagination-btn {
+            padding: 10px 15px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .pagination-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .pagination-btn:hover:not(.active) {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .pagination-info {
+            color: #718096;
+            font-size: 14px;
+            margin: 0 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="web-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>VocabMaster</h1>
+                <p>Spaced Repetition Learning</p>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a class="nav-link">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link">
+                        <span class="nav-icon">📚</span>
+                        <span class="nav-text">Study Session</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link">
+                        <span class="nav-icon">🎯</span>
+                        <span class="nav-text">Take Quiz</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active">
+                        <span class="nav-icon">📚</span>
+                        <span class="nav-text">Deck Library</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link">
+                        <span class="nav-icon">➕</span>
+                        <span class="nav-text">Add Words</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="user-section">
+                <div class="user-avatar">D</div>
+                <div class="user-info">
+                    <h4>Daniel Nguyen</h4>
+                    <p>Premium Member</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Top Header -->
+            <div class="top-header">
+                <div class="header-left">
+                    <h2>Deck Library</h2>
+                    <p>Manage your vocabulary collections</p>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" placeholder="Search words, decks, or topics...">
+                    </div>
+                    <button class="notification-btn">
+                        <span>🔔</span>
+                        <div class="notification-badge"></div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="library-container">
+                    <div class="library-header">
+                        <h3>My Deck Collection</h3>
+                        <div class="library-controls">
+                            <div class="deck-search-box">
+                                <span class="deck-search-icon">🔍</span>
+                                <input type="text" placeholder="Search decks by name..." id="deckSearch">
+                            </div>
+                            <button class="create-deck-btn" onclick="createNewDeck()">
+                                <span>➕</span>
+                                <span>Create New Deck</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <span style="color: #718096; font-weight: 500;">Filter by:</span>
+                        <button class="filter-btn active">All Decks</button>
+                        <button class="filter-btn">In Progress</button>
+                        <button class="filter-btn">Completed</button>
+                        <button class="filter-btn">Recently Created</button>
+                    </div>
+                    
+                    <div class="library-grid">
+                        <div class="library-deck-card">
+                            <div class="library-deck-header">
+                                <div class="library-deck-info">
+                                    <div class="deck-icon">🏢</div>
+                                    <div>
+                                        <h4>Business English</h4>
+                                        <div class="deck-meta">45 words • Created 2 weeks ago</div>
+                                    </div>
+                                </div>
+                                <span class="progress-percent">75%</span>
+                            </div>
+                            <div class="deck-stats">
+                                <div class="mini-stat">
+                                    <span class="mini-number">34</span>
+                                    <span class="mini-label">Learned</span>
+                                </div>
+                                <div class="mini-stat">
+                                    <span class="mini-number">8</span>
+                                    <span class="mini-label">Review</span>
+                                </div>
+                                <div class="mini-stat">
+                                    <span class="mini-number">3</span>
+                                    <span class="mini-label">New</span>
+                                </div>
+                            </div>
+                            <div class="mini-progress-bar">
+                                <div class="mini-progress-fill" style="width: 75%;"></div>
+                            </div>
+                            <div class="deck-actions">
+                                <button class="action-btn primary">📖 Study</button>
+                                <button class="action-btn secondary" onclick="editDeck('business')">✏️ Edit</button>
+                                <button class="action-btn danger" onclick="deleteDeck('business')">🗑️ Delete</button>
+                            </div>
+                        </div>
+                        
+                        <div class="library-deck-card">
+                            <div class="library-deck-header">
+                                <div class="library-deck-info">
+                                    <div class="deck-icon">🧪</div>
+                                    <div>
+                                        <h4>IELTS Vocabulary</h4>
+                                        <div class="deck-meta">128 words • Created 1 month ago</div>
+                                    </div>
+                                </div>
+                                <span class="progress-percent">60%</span>
+                            </div>
+                            <div class="deck-stats">
+                                <div class="mini-stat">
+                                    <span class="mini-number">77</span>
+                                    <span class="mini-label">Learned</span>
+                                </div>
+                                <div class="mini-stat">
+                                    <span class="mini-number">6</span>
+                                    <span class="mini-label">Review</span>
+                                </div>
+                                <div class="mini-stat">
+                                    <span class="mini-number">45</span>
+                                    <span class="mini-label">New</span>
+                                </div>
+                            </div>
+                            <div class="mini-progress-bar">
+                                <div class="mini-progress-fill" style="width: 60%;"></div>
+                            </div>
+                            <div class="deck-actions">
+                                <button class="action-btn primary">📖 Study</button>
+                                <button class="action-btn secondary" onclick="editDeck('ielts')">✏️ Edit</button>
+                                <button class="action-btn danger" onclick="deleteDeck('ielts')">🗑️ Delete</button>
+                            </div>
+                        </div>
+                        
+                        <div class="library-deck-card">
+                            <div class="library-deck-header">
+                                <div class="library-deck-info">
+                                    <div class="deck-icon">📚</div>
+                                    <div>
+                                        <h4>Daily Conversation</h4>
+                                        <div class="deck-meta">82 words • Created 3 weeks ago</div>
+                                    </div>
+                                </div>
+                                <span class="progress-percent">90%</span>
+                            </div>
+                            <div class="deck-stats">
+                                <div class="mini-stat">
+                                    <span class="mini-number">74</span>
+                                    <span class="mini-label">Learned</span>
+                                </div>
+                                <div class="mini-stat">
+                                    <span class="mini-number">4</span>
+                                    <span class="mini-label">Review</span>
+                                </div>
+                                <div class="mini-stat">
+                                    <span class="mini-number">4</span>
+                                    <span class="mini-label">New</span>
+                                </div>
+                            </div>
+                            <div class="mini-progress-bar">
+                                <div class="mini-progress-fill" style="width: 90%;"></div>
+                            </div>
+                            <div class="deck-actions">
+                                <button class="action-btn primary">📖 Study</button>
+                                <button class="action-btn secondary" onclick="editDeck('conversation')">✏️ Edit</button>
+                                <button class="action-btn danger" onclick="deleteDeck('conversation')">🗑️ Delete</button>
+                            </div>
+                        </div>
+                        
+                        <div class="library-deck-card">
+                            <div class="library-deck-header">
+                                <div class="library-deck-info">
+                                    <div class="deck-icon">🎓</div>
+                                    <div>
+                                        <h4>Academic Writing</h4>
+                                        <div class="deck-meta">156 words • Created 2 months ago</div>
+                                    </div>
+                                </div>
+                                <span class="progress-percent">100%</span>
+                            </div>
+                            <div class="deck-stats">
+                                <div class="mini-stat">
+                                    <span class="mini-number">156</span>
+                                    <span class="mini-label">Learned</span>
+                                </div>
+                                <div class="mini-stat">
+                                    <span class="mini-number">0</span>
+                                    <span class="mini-label">Review</span>
+                                </div>
+                                <div class="mini-stat">
+                                    <span class="mini-number">0</span>
+                                    <span class="mini-label">New</span>
+                                </div>
+                            </div>
+                            <div class="mini-progress-bar">
+                                <div class="mini-progress-fill" style="width: 100%;"></div>
+                            </div>
+                            <div class="deck-actions">
+                                <button class="action-btn primary">📖 Study</button>
+                                <button class="action-btn secondary" onclick="editDeck('academic')">✏️ Edit</button>
+                                <button class="action-btn danger" onclick="deleteDeck('academic')">🗑️ Delete</button>
+                            </div>
+                        </div>
+                        
+                        <div class="library-deck-card">
+                            <div class="library-deck-header">
+                                <div class="library-deck-info">
+                                    <div class="deck-icon">✈️</div>
+                                    <div>
+                                        <h4>Travel & Tourism</h4>
+                                        <div class="deck-meta">67 words • Created 1 week ago</div>
+                                    </div>
+                                </div>
+                                <span class="progress-percent">100%</span>
+                            </div>
+                            <div class="deck-stats">
+                                <div class="mini-stat">
+                                    <span class="mini-number">67</span>
+                                    <span class="mini-label">Learned</span>
+                                </div>
+                                <div class="mini-stat">
+                                    <span class="mini-number">0</span>
+                                    <span class="mini-label">Review</span>
+                                </div>
+                                <div class="mini-stat">
+                                    <span class="mini-number">0</span>
+                                    <span class="mini-label">New</span>
+                                </div>
+                            </div>
+                            <div class="mini-progress-bar">
+                                <div class="mini-progress-fill" style="width: 100%;"></div>
+                            </div>
+                            <div class="deck-actions">
+                                <button class="action-btn primary">📖 Study</button>
+                                <button class="action-btn secondary" onclick="editDeck('travel')">✏️ Edit</button>
+                                <button class="action-btn danger" onclick="deleteDeck('travel')">🗑️ Delete</button>
+                            </div>
+                        </div>
+                        
+                        <div class="library-deck-card">
+                            <div class="library-deck-header">
+                                <div class="library-deck-info">
+                                    <div class="deck-icon">🏥</div>
+                                    <div>
+                                        <h4>Medical Terms</h4>
+                                        <div class="deck-meta">203 words • Created 3 months ago</div>
+                                    </div>
+                                </div>
+                                <span class="progress-percent">45%</span>
+                            </div>
+                            <div class="deck-stats">
+                                <div class="mini-stat">
+                                    <span class="mini-number">91</span>
+                                    <span class="mini-label">Learned</span>
+                                </div>
+                                <div class="mini-stat">
+                                    <span class="mini-number">15</span>
+                                    <span class="mini-label">Review</span>
+                                </div>
+                                <div class="mini-stat">
+                                    <span class="mini-number">97</span>
+                                    <span class="mini-label">New</span>
+                                </div>
+                            </div>
+                            <div class="mini-progress-bar">
+                                <div class="mini-progress-fill" style="width: 45%;"></div>
+                            </div>
+                            <div class="deck-actions">
+                                <button class="action-btn primary">📖 Study</button>
+                                <button class="action-btn secondary" onclick="editDeck('medical')">✏️ Edit</button>
+                                <button class="action-btn danger" onclick="deleteDeck('medical')">🗑️ Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        <button class="pagination-btn">‹ Previous</button>
+                        <button class="pagination-btn active">1</button>
+                        <button class="pagination-btn">2</button>
+                        <button class="pagination-btn">3</button>
+                        <span class="pagination-info">Showing 1-6 of 15 decks</span>
+                        <button class="pagination-btn">Next ›</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Search functionality
+        document.getElementById('deckSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            // Implement search logic here
+            console.log('Searching for:', searchTerm);
+        });
+        
+        // Action functions
+        function createNewDeck() {
+            console.log('Navigate to create deck screen');
+            // Navigate to create deck screen
+        }
+        
+        function editDeck(deckId) {
+            console.log('Navigate to edit deck screen for:', deckId);
+            // Navigate to edit deck screen
+        }
+        
+        function deleteDeck(deckId) {
+            console.log('Navigate to delete deck confirmation for:', deckId);
+            // Navigate to delete deck screen
+        }
+        
+        // Pagination functionality
+        document.querySelectorAll('.pagination-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.textContent.includes('Previous') || this.textContent.includes('Next')) {
+                    console.log('Navigate to page:', this.textContent);
+                } else if (!isNaN(this.textContent)) {
+                    document.querySelectorAll('.pagination-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

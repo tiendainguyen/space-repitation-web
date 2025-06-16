@@ -9,11 +9,37 @@ class AuthService {
         password
       });
 
-      const { token, user } = response.data;
+      console.log('Login response:', response.data);
+      
+      // Check different possible response structures
+      let token, user;
+      
+      if (response.data.token) {
+        token = response.data.token;
+        user = response.data.user;
+      } else if (response.data.data && response.data.data.token) {
+        token = response.data.data.token;
+        user = response.data.data.user;
+      } else if (response.data.accessToken) {
+        token = response.data.accessToken;
+        user = response.data.user;
+      }
+      
+      console.log('Extracted token:', token);
+      console.log('Extracted user:', user);
       
       if (token) {
         localStorage.setItem('vocabmaster_token', token);
-        localStorage.setItem('vocabmaster_user', JSON.stringify(user));
+        if (user) {
+          localStorage.setItem('vocabmaster_user', JSON.stringify(user));
+          console.log('User saved to localStorage:', user);
+        } else {
+          console.warn('No user data found in response, using minimal user object');
+          localStorage.setItem('vocabmaster_user', JSON.stringify({ authenticated: true }));
+        }
+        console.log('Token saved to localStorage:', localStorage.getItem('vocabmaster_token'));
+      } else {
+        console.error('No token found in response:', response.data);
       }
 
       return {
@@ -100,7 +126,16 @@ class AuthService {
 
   getUser() {
     const user = localStorage.getItem('vocabmaster_user');
-    return user ? JSON.parse(user) : null;
+    if (!user || user === 'undefined' || user === 'null') {
+      return null;
+    }
+    try {
+      return JSON.parse(user);
+    } catch (error) {
+      console.error('Error parsing user data from localStorage:', error);
+      localStorage.removeItem('vocabmaster_user');
+      return null;
+    }
   }
 
   isAuthenticated() {
